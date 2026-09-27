@@ -1,3 +1,171 @@
-import{useEffect,useState}from'react';import{BriefcaseBusiness,Plus,Search,TrendingUp,CheckCircle2,Clock3,XCircle}from'lucide-react';import{getApplications,getStats,createApplication,updateApplication,deleteApplication}from'./api';import StatCard from'./components/StatCard';import ApplicationForm from'./components/ApplicationForm';import ApplicationTable from'./components/ApplicationTable';
-const statuses=['All','Saved','Applied','Assessment','Interview','Offer','Rejected'];
-export default function App(){const[items,setItems]=useState([]),[stats,setStats]=useState({total:0,applied:0,assessment:0,interview:0,offer:0,rejected:0,successRate:0}),[search,setSearch]=useState(''),[status,setStatus]=useState('All'),[editing,setEditing]=useState(null),[form,setForm]=useState(false),[msg,setMsg]=useState('');async function load(){try{const[a,s]=await Promise.all([getApplications({search,status}),getStats()]);setItems(a);setStats(s)}catch{setMsg('Start MongoDB and the backend to load applications.')}}useEffect(()=>{const t=setTimeout(load,200);return()=>clearTimeout(t)},[search,status]);async function save(d){try{editing?await updateApplication(editing._id,d):await createApplication(d);setMsg(editing?'Application updated.':'Application added.');setEditing(null);setForm(false);load()}catch{setMsg('Unable to save application.')}}async function del(id){if(!confirm('Delete this application?'))return;await deleteApplication(id);setMsg('Application deleted.');load()}return <><header><div className="brand"><span><BriefcaseBusiness size={19}/></span><div><b>JobTrack</b><small>Smart Application Manager</small></div></div><button className="primary" onClick={()=>{setEditing(null);setForm(true)}}><Plus size={16}/> Add application</button></header><main><section className="hero"><div><small>CAREER DASHBOARD</small><h1>Stay on top of every opportunity.</h1><p>Track applications, interviews and outcomes in one focused workspace.</p></div><div className="hero-mark"><TrendingUp size={40}/></div></section>{msg&&<div className="message" onClick={()=>setMsg('')}>{msg}</div>}<section className="stats">{[['Total applications',stats.total,'blue'],['Applied',stats.applied,'violet'],['Assessments',stats.assessment,'amber'],['Interviews',stats.interview,'orange'],['Offers',stats.offer,'green'],['Success rate',stats.successRate+'%','teal']].map(x=><StatCard key={x[0]} label={x[0]} value={x[1]} accent={x[2]}/>)}</section>{form&&<section className="panel"><ApplicationForm editing={editing} onSubmit={save} onCancel={()=>{setEditing(null);setForm(false)}}/></section>}<section className="panel"><div className="panel-head"><div><small>APPLICATIONS</small><h2>Your job pipeline</h2></div><div className="summary"><span><CheckCircle2 size={14}/> {stats.offer} offers</span><span><Clock3 size={14}/> {stats.interview} interviews</span><span><XCircle size={14}/> {stats.rejected} rejected</span></div></div><div className="toolbar"><div className="search"><Search size={16}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search company, role or location..."/></div><div className="filters">{statuses.map(x=><button key={x} className={status===x?'active':''} onClick={()=>setStatus(x)}>{x}</button>)}</div></div><ApplicationTable items={items} onEdit={x=>{setEditing(x);setForm(true);scrollTo({top:0,behavior:'smooth'})}} onDelete={del}/></section><div className="insight"><TrendingUp size={19}/><span><b>Keep your pipeline moving</b><br/>Use status updates and interview dates to turn your application list into an actionable pipeline.</span></div></main><footer>JobTrack · Built with React, Express & MongoDB</footer></>}
+import { useEffect, useState } from "react";
+import Auth from "./components/Auth";
+import ApplicationForm from "./components/ApplicationForm";
+import ApplicationTable from "./components/ApplicationTable";
+import StatCard from "./components/StatCard";
+import {
+  getApplications,
+  getStats,
+  createApplication,
+  updateApplication,
+  deleteApplication
+} from "./api";
+
+function App() {
+  const [user, setUser] = useState(null);
+  const [applications, setApplications] = useState([]);
+  const [editing, setEditing] = useState(null);
+  const [stats, setStats] = useState({
+    total: 0,
+    saved: 0,
+    applied: 0,
+    assessment: 0,
+    interview: 0,
+    offer: 0,
+    rejected: 0,
+    successRate: 0
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+
+    if (savedUser && token) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      loadData();
+    }
+  }, [user]);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const [applicationsData, statsData] = await Promise.all([
+        getApplications(),
+        getStats()
+      ]);
+
+      setApplications(applicationsData);
+      setStats(statsData);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogin = (loggedInUser) => {
+    setUser(loggedInUser);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    setApplications([]);
+    setEditing(null);
+  };
+
+  const handleCreate = async (application) => {
+    try {
+      await createApplication(application);
+      await loadData();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleEdit = (application) => {
+    setEditing(application);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  };
+
+  const handleUpdate = async (application) => {
+    try {
+      await updateApplication(application._id, application);
+      setEditing(null);
+      await loadData();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditing(null);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteApplication(id);
+      await loadData();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  if (!user) {
+    return <Auth onLogin={handleLogin} />;
+  }
+
+  return (
+    <div className="app">
+      <header className="header">
+        <div>
+          <h1>Smart Job Tracker</h1>
+          <p>Track your job applications in one place.</p>
+        </div>
+
+        <div className="user-section">
+          <span>Welcome, {user.name}</span>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+      </header>
+
+      <main>
+        {error && <div className="error-message">{error}</div>}
+
+        <section className="stats-grid">
+          <StatCard title="Total" value={stats.total} />
+          <StatCard title="Applied" value={stats.applied} />
+          <StatCard title="Assessment" value={stats.assessment} />
+          <StatCard title="Interview" value={stats.interview} />
+          <StatCard title="Offers" value={stats.offer} />
+          <StatCard title="Rejected" value={stats.rejected} />
+        </section>
+
+        <section className="dashboard-section">
+          <ApplicationForm
+            editing={editing}
+            onSubmit={editing ? handleUpdate : handleCreate}
+            onCancel={handleCancelEdit}
+          />
+        </section>
+
+        <section className="dashboard-section">
+          {loading ? (
+            <p>Loading applications...</p>
+          ) : (
+            <ApplicationTable
+              applications={applications}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
+        </section>
+      </main>
+    </div>
+  );
+}
+
+export default App;

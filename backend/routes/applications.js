@@ -1,9 +1,135 @@
-const express=require('express');
-const JobApplication=require('../models/JobApplication');
-const router=express.Router();
-router.get('/',async(req,res)=>{try{const {status,search}=req.query;const f={};if(status&&status!=='All')f.status=status;if(search)f.$or=[{company:{$regex:search,$options:'i'}},{role:{$regex:search,$options:'i'}},{location:{$regex:search,$options:'i'}}];res.json(await JobApplication.find(f).sort({createdAt:-1}));}catch(e){res.status(500).json({message:'Failed to fetch applications'});}});
-router.get('/stats',async(req,res)=>{try{const a=await JobApplication.find();const s={total:a.length,saved:0,applied:0,assessment:0,interview:0,offer:0,rejected:0};a.forEach(x=>s[x.status.toLowerCase()]++);const d=s.offer+s.rejected;s.successRate=d?Math.round(s.offer/d*100):0;res.json(s);}catch(e){res.status(500).json({message:'Failed to fetch statistics'});}});
-router.post('/',async(req,res)=>{try{res.status(201).json(await JobApplication.create(req.body));}catch(e){res.status(400).json({message:'Invalid application data'});}});
-router.put('/:id',async(req,res)=>{try{const a=await JobApplication.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true});if(!a)return res.status(404).json({message:'Application not found'});res.json(a);}catch(e){res.status(400).json({message:'Failed to update application'});}});
-router.delete('/:id',async(req,res)=>{try{const a=await JobApplication.findByIdAndDelete(req.params.id);if(!a)return res.status(404).json({message:'Application not found'});res.json({message:'Application deleted'});}catch(e){res.status(400).json({message:'Failed to delete application'});}});
-module.exports=router;
+const express = require("express");
+const JobApplication = require("../models/JobApplication");
+const authenticateToken = require("../middleware/authMiddleware");
+
+const router = express.Router();
+
+router.use(authenticateToken);
+
+router.get("/", async (req, res) => {
+  try {
+    const { status, search } = req.query;
+    const filter = {
+      user: req.user.userId
+    };
+
+    if (status && status !== "All") {
+      filter.status = status;
+    }
+
+    if (search) {
+      filter.$or = [
+        { company: { $regex: search, $options: "i" } },
+        { role: { $regex: search, $options: "i" } },
+        { location: { $regex: search, $options: "i" } }
+      ];
+    }
+
+    const applications = await JobApplication.find(filter).sort({ createdAt: -1 });
+
+    res.json(applications);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch applications"
+    });
+  }
+});
+
+router.get("/stats", async (req, res) => {
+  try {
+    const applications = await JobApplication.find({
+      user: req.user.userId
+    });
+
+    const stats = {
+      total: applications.length,
+      saved: applications.filter(a => a.status === "Saved").length,
+      applied: applications.filter(a => a.status === "Applied").length,
+      assessment: applications.filter(a => a.status === "Assessment").length,
+      interview: applications.filter(a => a.status === "Interview").length,
+      offer: applications.filter(a => a.status === "Offer").length,
+      rejected: applications.filter(a => a.status === "Rejected").length
+    };
+
+    const decided = stats.offer + stats.rejected;
+
+    stats.successRate = decided
+      ? Math.round((stats.offer / decided) * 100)
+      : 0;
+
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch statistics"
+    });
+  }
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const application = await JobApplication.create({
+      ...req.body,
+      user: req.user.userId
+    });
+
+    res.status(201).json(application);
+  } catch (error) {
+    res.status(400).json({
+      message: "Invalid application data",
+      error: error.message
+    });
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  try {
+    const application = await JobApplication.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        user: req.user.userId
+      },
+      req.body,
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found"
+      });
+    }
+
+    res.json(application);
+  } catch (error) {
+    res.status(400).json({
+      message: "Failed to update application"
+    });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const application = await JobApplication.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user.userId
+    });
+
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found"
+      });
+    }
+
+    res.json({
+      message: "Application deleted"
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "Failed to delete application"
+    });
+  }
+});
+
+module.exports = router;
