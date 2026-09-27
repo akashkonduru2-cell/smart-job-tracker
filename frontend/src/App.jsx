@@ -5,6 +5,7 @@ import ApplicationTable from "./components/ApplicationTable";
 import StatCard from "./components/StatCard";
 import Analytics from "./components/Analytics";
 import UpcomingInterviews from "./components/UpcomingInterviews";
+import ResumeUpload from "./components/ResumeUpload";
 import {
   getApplications,
   getStats,
@@ -127,7 +128,10 @@ function App() {
     }
   };
 
-  const handleStatusChange = async (application, newStatus) => {
+  const handleStatusChange = async (
+    application,
+    newStatus
+  ) => {
     try {
       setError("");
 
@@ -170,7 +174,9 @@ function App() {
       <header className="header">
         <div>
           <h1>Smart Job Tracker</h1>
-          <p>Track your job applications in one place.</p>
+          <p>
+            Track your job applications in one place.
+          </p>
         </div>
 
         <div className="user-section">
@@ -204,10 +210,19 @@ function App() {
         <section className="stats-grid">
           <StatCard title="Total" value={stats.total} />
           <StatCard title="Applied" value={stats.applied} />
-          <StatCard title="Assessment" value={stats.assessment} />
-          <StatCard title="Interview" value={stats.interview} />
+          <StatCard
+            title="Assessment"
+            value={stats.assessment}
+          />
+          <StatCard
+            title="Interview"
+            value={stats.interview}
+          />
           <StatCard title="Offers" value={stats.offer} />
-          <StatCard title="Rejected" value={stats.rejected} />
+          <StatCard
+            title="Rejected"
+            value={stats.rejected}
+          />
         </section>
 
         <section className="dashboard-grid">
@@ -216,6 +231,10 @@ function App() {
           <UpcomingInterviews
             applications={applications}
           />
+        </section>
+
+        <section className="dashboard-section">
+          <ResumeUpload />
         </section>
 
         <section className="dashboard-section">
@@ -236,20 +255,32 @@ function App() {
               type="text"
               placeholder="Search company, role or location..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
             />
 
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(e) =>
+                setStatusFilter(e.target.value)
+              }
             >
-              <option value="All">All Statuses</option>
+              <option value="All">
+                All Statuses
+              </option>
               <option value="Saved">Saved</option>
               <option value="Applied">Applied</option>
-              <option value="Assessment">Assessment</option>
-              <option value="Interview">Interview</option>
+              <option value="Assessment">
+                Assessment
+              </option>
+              <option value="Interview">
+                Interview
+              </option>
               <option value="Offer">Offer</option>
-              <option value="Rejected">Rejected</option>
+              <option value="Rejected">
+                Rejected
+              </option>
             </select>
           </div>
 

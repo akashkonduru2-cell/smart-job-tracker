@@ -969,3 +969,154 @@ body.dark-mode .auth-error {
     padding: 25px;
   }
 }
+.resume-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.resume-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.resume-header small {
+  color: #6366f1;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.resume-header h2 {
+  margin: 6px 0 0;
+  font-size: 22px;
+}
+
+.resume-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 12px;
+  margin-bottom: 18px;
+}
+
+.resume-info strong {
+  display: block;
+  font-size: 15px;
+}
+
+.resume-info p {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.resume-empty {
+  color: #64748b;
+  margin-bottom: 18px;
+}
+
+.resume-upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 18px;
+  background: #6366f1;
+  color: #ffffff;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.resume-upload-button:hover {
+  opacity: 0.9;
+}
+
+.resume-upload-button input {
+  display: none;
+}
+
+.resume-hint {
+  margin: 10px 0 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.resume-success {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: #dcfce7;
+  color: #166534;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.resume-error {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.danger-button {
+  border: none;
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 9px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.danger-button:hover {
+  background: #fecaca;
+}
+
+body.dark-mode .resume-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+body.dark-mode .resume-info {
+  background: #0f172a;
+}
+
+body.dark-mode .resume-info p,
+body.dark-mode .resume-empty,
+body.dark-mode .resume-hint {
+  color: #94a3b8;
+}
+
+body.dark-mode .resume-success {
+  background: #14532d;
+  color: #bbf7d0;
+}
+
+body.dark-mode .resume-error {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+body.dark-mode .danger-button {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+body.dark-mode .danger-button:hover {
+  background: #991b1b;
+}
+
+@media (max-width: 600px) {
+  .resume-info {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
