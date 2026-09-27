@@ -1120,3 +1120,163 @@ body.dark-mode .danger-button:hover {
     flex-direction: column;
   }
 }
+.matcher-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.matcher-header {
+  margin-bottom: 18px;
+}
+
+.matcher-header small {
+  color: #6366f1;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.matcher-header h2 {
+  margin: 6px 0;
+  font-size: 22px;
+}
+
+.matcher-header p {
+  margin: 0;
+  color: #64748b;
+}
+
+.job-description-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  resize: vertical;
+  font: inherit;
+  line-height: 1.5;
+  outline: none;
+}
+
+.job-description-input:focus {
+  border-color: #6366f1;
+}
+
+.matcher-button {
+  margin-top: 14px;
+}
+
+.matcher-error {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 8px;
+}
+
+.matcher-result {
+  margin-top: 24px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 24px;
+}
+
+.match-score {
+  text-align: center;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.match-score small {
+  color: #6366f1;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.score {
+  font-size: 48px;
+  font-weight: 800;
+  margin: 8px 0;
+}
+
+.match-score p {
+  margin: 0;
+  color: #64748b;
+}
+
+.skills-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.skills-section h3 {
+  margin-bottom: 12px;
+}
+
+.skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.skill.matched {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.skill.missing {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.no-skills {
+  color: #64748b;
+}
+
+body.dark-mode .matcher-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+body.dark-mode .matcher-header p,
+body.dark-mode .match-score p,
+body.dark-mode .no-skills {
+  color: #94a3b8;
+}
+
+body.dark-mode .job-description-input {
+  background: #0f172a;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+body.dark-mode .matcher-result {
+  border-color: #334155;
+}
+
+body.dark-mode .match-score {
+  background: #0f172a;
+}
+
+body.dark-mode .matcher-error {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+@media (max-width: 700px) {
+  .skills-section {
+    grid-template-columns: 1fr;
+  }
+}

@@ -6,6 +6,7 @@ import StatCard from "./components/StatCard";
 import Analytics from "./components/Analytics";
 import UpcomingInterviews from "./components/UpcomingInterviews";
 import ResumeUpload from "./components/ResumeUpload";
+import JobMatcher from "./components/JobMatcher";
 import {
   getApplications,
   getStats,
@@ -65,10 +66,11 @@ function App() {
       setLoading(true);
       setError("");
 
-      const [applicationsData, statsData] = await Promise.all([
-        getApplications(statusFilter, search),
-        getStats()
-      ]);
+      const [applicationsData, statsData] =
+        await Promise.all([
+          getApplications(statusFilter, search),
+          getStats()
+        ]);
 
       setApplications(applicationsData);
       setStats(statsData);
@@ -174,6 +176,7 @@ function App() {
       <header className="header">
         <div>
           <h1>Smart Job Tracker</h1>
+
           <p>
             Track your job applications in one place.
           </p>
@@ -208,17 +211,31 @@ function App() {
         )}
 
         <section className="stats-grid">
-          <StatCard title="Total" value={stats.total} />
-          <StatCard title="Applied" value={stats.applied} />
+          <StatCard
+            title="Total"
+            value={stats.total}
+          />
+
+          <StatCard
+            title="Applied"
+            value={stats.applied}
+          />
+
           <StatCard
             title="Assessment"
             value={stats.assessment}
           />
+
           <StatCard
             title="Interview"
             value={stats.interview}
           />
-          <StatCard title="Offers" value={stats.offer} />
+
+          <StatCard
+            title="Offers"
+            value={stats.offer}
+          />
+
           <StatCard
             title="Rejected"
             value={stats.rejected}
@@ -235,6 +252,10 @@ function App() {
 
         <section className="dashboard-section">
           <ResumeUpload />
+        </section>
+
+        <section className="dashboard-section">
+          <JobMatcher />
         </section>
 
         <section className="dashboard-section">
@@ -269,15 +290,27 @@ function App() {
               <option value="All">
                 All Statuses
               </option>
-              <option value="Saved">Saved</option>
-              <option value="Applied">Applied</option>
+
+              <option value="Saved">
+                Saved
+              </option>
+
+              <option value="Applied">
+                Applied
+              </option>
+
               <option value="Assessment">
                 Assessment
               </option>
+
               <option value="Interview">
                 Interview
               </option>
-              <option value="Offer">Offer</option>
+
+              <option value="Offer">
+                Offer
+              </option>
+
               <option value="Rejected">
                 Rejected
               </option>
