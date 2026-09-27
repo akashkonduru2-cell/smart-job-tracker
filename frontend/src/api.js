@@ -9,10 +9,25 @@ const getHeaders = () => {
   };
 };
 
-export async function getApplications() {
-  const response = await fetch(API_URL, {
-    headers: getHeaders()
-  });
+export async function getApplications(status = "All", search = "") {
+  const params = new URLSearchParams();
+
+  if (status && status !== "All") {
+    params.append("status", status);
+  }
+
+  if (search) {
+    params.append("search", search);
+  }
+
+  const query = params.toString();
+
+  const response = await fetch(
+    `${API_URL}${query ? `?${query}` : ""}`,
+    {
+      headers: getHeaders()
+    }
+  );
 
   const data = await response.json();
 

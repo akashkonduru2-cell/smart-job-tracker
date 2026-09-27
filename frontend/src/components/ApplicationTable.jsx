@@ -9,10 +9,20 @@ const date = (x) =>
       })
     : "—";
 
+const statuses = [
+  "Saved",
+  "Applied",
+  "Assessment",
+  "Interview",
+  "Offer",
+  "Rejected"
+];
+
 export default function ApplicationTable({
   applications,
   onEdit,
-  onDelete
+  onDelete,
+  onStatusChange
 }) {
   if (!applications.length) {
     return (
@@ -64,15 +74,23 @@ export default function ApplicationTable({
               <td>{a.role}</td>
 
               <td>
-                <span className={`status s-${a.status.toLowerCase()}`}>
-                  {a.status}
-                </span>
+                <select
+                  className={`status-select s-${a.status.toLowerCase()}`}
+                  value={a.status}
+                  onChange={(e) =>
+                    onStatusChange(a, e.target.value)
+                  }
+                >
+                  {statuses.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
               </td>
 
               <td>{date(a.appliedDate)}</td>
-
               <td>{date(a.interviewDate)}</td>
-
               <td>{a.location || "—"}</td>
 
               <td>

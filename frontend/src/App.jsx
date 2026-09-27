@@ -3,6 +3,8 @@ import Auth from "./components/Auth";
 import ApplicationForm from "./components/ApplicationForm";
 import ApplicationTable from "./components/ApplicationTable";
 import StatCard from "./components/StatCard";
+import Analytics from "./components/Analytics";
+import UpcomingInterviews from "./components/UpcomingInterviews";
 import {
   getApplications,
   getStats,
@@ -15,6 +17,14 @@ function App() {
   const [user, setUser] = useState(null);
   const [applications, setApplications] = useState([]);
   const [editing, setEditing] = useState(null);
+
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("darkMode") === "true";
+  });
+
   const [stats, setStats] = useState({
     total: 0,
     saved: 0,
@@ -25,6 +35,7 @@ function App() {
     rejected: 0,
     successRate: 0
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -38,10 +49,15 @@ function App() {
   }, []);
 
   useEffect(() => {
+    document.body.classList.toggle("dark-mode", darkMode);
+    localStorage.setItem("darkMode", darkMode);
+  }, [darkMode]);
+
+  useEffect(() => {
     if (user) {
       loadData();
     }
-  }, [user]);
+  }, [user, search, statusFilter]);
 
   const loadData = async () => {
     try {
@@ -49,7 +65,7 @@ function App() {
       setError("");
 
       const [applicationsData, statsData] = await Promise.all([
-        getApplications(),
+        getApplications(statusFilter, search),
         getStats()
       ]);
 
@@ -69,6 +85,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+
     setUser(null);
     setApplications([]);
     setEditing(null);
@@ -76,6 +93,8 @@ function App() {
 
   const handleCreate = async (application) => {
     try {
+      setError("");
+
       await createApplication(application);
       await loadData();
     } catch (error) {
@@ -85,6 +104,7 @@ function App() {
 
   const handleEdit = (application) => {
     setEditing(application);
+
     window.scrollTo({
       top: 0,
       behavior: "smooth"
@@ -93,8 +113,29 @@ function App() {
 
   const handleUpdate = async (application) => {
     try {
-      await updateApplication(application._id, application);
+      setError("");
+
+      await updateApplication(
+        application._id,
+        application
+      );
+
       setEditing(null);
+      await loadData();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleStatusChange = async (application, newStatus) => {
+    try {
+      setError("");
+
+      await updateApplication(application._id, {
+        ...application,
+        status: newStatus
+      });
+
       await loadData();
     } catch (error) {
       setError(error.message);
@@ -107,11 +148,17 @@ function App() {
 
   const handleDelete = async (id) => {
     try {
+      setError("");
+
       await deleteApplication(id);
       await loadData();
     } catch (error) {
       setError(error.message);
     }
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode((current) => !current);
   };
 
   if (!user) {
@@ -128,12 +175,31 @@ function App() {
 
         <div className="user-section">
           <span>Welcome, {user.name}</span>
-          <button onClick={handleLogout}>Logout</button>
+
+          <button
+            className="theme-toggle"
+            onClick={toggleDarkMode}
+            title={
+              darkMode
+                ? "Switch to light mode"
+                : "Switch to dark mode"
+            }
+          >
+            {darkMode ? "☀️" : "🌙"}
+          </button>
+
+          <button onClick={handleLogout}>
+            Logout
+          </button>
         </div>
       </header>
 
       <main>
-        {error && <div className="error-message">{error}</div>}
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
 
         <section className="stats-grid">
           <StatCard title="Total" value={stats.total} />
@@ -144,15 +210,49 @@ function App() {
           <StatCard title="Rejected" value={stats.rejected} />
         </section>
 
+        <section className="dashboard-grid">
+          <Analytics stats={stats} />
+
+          <UpcomingInterviews
+            applications={applications}
+          />
+        </section>
+
         <section className="dashboard-section">
           <ApplicationForm
             editing={editing}
-            onSubmit={editing ? handleUpdate : handleCreate}
+            onSubmit={
+              editing
+                ? handleUpdate
+                : handleCreate
+            }
             onCancel={handleCancelEdit}
           />
         </section>
 
         <section className="dashboard-section">
+          <div className="filters">
+            <input
+              type="text"
+              placeholder="Search company, role or location..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="All">All Statuses</option>
+              <option value="Saved">Saved</option>
+              <option value="Applied">Applied</option>
+              <option value="Assessment">Assessment</option>
+              <option value="Interview">Interview</option>
+              <option value="Offer">Offer</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+
           {loading ? (
             <p>Loading applications...</p>
           ) : (
@@ -160,6 +260,7 @@ function App() {
               applications={applications}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onStatusChange={handleStatusChange}
             />
           )}
         </section>
