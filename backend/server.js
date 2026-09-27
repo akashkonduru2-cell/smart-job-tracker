@@ -1,14 +1,23 @@
+const dns = require("dns");
+
+dns.setServers([
+  "8.8.8.8",
+  "8.8.4.4"
+]);
+
 require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+
 const applicationRoutes = require("./routes/applications");
 const authRoutes = require("./routes/auth");
 const resumeRoutes = require("./routes/resume");
 const matchingRoutes = require("./routes/matching");
 
 const app = express();
+
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
@@ -32,10 +41,16 @@ mongoose
     console.log("MongoDB connected");
 
     app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(
+        `Server running on http://localhost:${PORT}`
+      );
     });
   })
   .catch((error) => {
-    console.error("MongoDB connection failed:", error.message);
+    console.error(
+      "MongoDB connection failed:",
+      error.message
+    );
+
     process.exit(1);
   });
