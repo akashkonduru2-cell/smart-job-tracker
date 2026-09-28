@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-const API_URL = "http://localhost:5000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export default function JobMatcher() {
   const [jobDescription, setJobDescription] = useState("");
@@ -22,7 +23,7 @@ export default function JobMatcher() {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `${API_URL}/matching/analyze`,
+        `${API_BASE_URL}/matching/analyze`,
         {
           method: "POST",
           headers: {

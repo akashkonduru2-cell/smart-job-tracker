@@ -1,5 +1,8 @@
-const API_URL = "http://localhost:5000/api/applications";
-const RESUME_API_URL = "http://localhost:5000/api/resume";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+const API_URL = `${API_BASE_URL}/applications`;
+const RESUME_API_URL = `${API_BASE_URL}/resume`;
 
 const getHeaders = () => {
   const token = localStorage.getItem("token");
