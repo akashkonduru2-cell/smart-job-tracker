@@ -4,18 +4,14 @@ A full-stack web application for managing job applications, tracking application
 
 ## Live Demo
 
-Frontend:
-https://smart-job-tracker-steel.vercel.app
-
-Backend API:
-https://smart-job-tracker-api-h89q.onrender.com
-
-GitHub:
-https://github.com/akashkonduru2-cell/smart-job-tracker
+- Frontend: https://smart-job-tracker-steel.vercel.app
+- Backend API: https://smart-job-tracker-api-h89q.onrender.com
+- GitHub: https://github.com/akashkonduru2-cell/smart-job-tracker
 
 ## Features
 
 ### Authentication
+
 - User registration and login
 - Password hashing using bcrypt
 - JWT-based authentication
@@ -25,6 +21,7 @@ https://github.com/akashkonduru2-cell/smart-job-tracker
 - Password reset emails using Resend
 
 ### Job Application Management
+
 - Add job applications
 - Edit applications
 - Delete applications
@@ -35,6 +32,7 @@ https://github.com/akashkonduru2-cell/smart-job-tracker
 - Track application and interview dates
 
 ### Application Tracking
+
 Supported statuses:
 
 - Saved
@@ -45,6 +43,7 @@ Supported statuses:
 - Rejected
 
 ### Dashboard & Analytics
+
 - Total applications
 - Saved applications
 - Applied applications
@@ -57,6 +56,7 @@ Supported statuses:
 - Upcoming interviews
 
 ### Resume Management
+
 - Upload PDF resume
 - Resume text extraction
 - Store extracted resume information
@@ -64,6 +64,7 @@ Supported statuses:
 - Delete resume
 
 ### Job Description Matching
+
 Paste a job description and compare it against skills extracted from your resume.
 
 The matcher provides:
@@ -74,12 +75,14 @@ The matcher provides:
 - Required skills
 
 ### Search & Filtering
+
 - Search applications by company
 - Search by role
 - Search by location
 - Filter by application status
 
 ### UI
+
 - Responsive React interface
 - Dark mode
 - Dashboard-based layout
@@ -144,10 +147,7 @@ The matcher provides:
                 +---------------+---------------+
                                 |
                          MongoDB Atlas
-
-
-
-
+```
 
 ## Project Structure
 
@@ -173,14 +173,7 @@ smart-job-tracker/
 │
 ├── .gitignore
 └── README.md
-
-
-
-
-
-
-
-
+```
 
 ## Local Setup
 
@@ -189,54 +182,119 @@ smart-job-tracker/
 ```bash
 git clone https://github.com/akashkonduru2-cell/smart-job-tracker.git
 cd smart-job-tracker
+```
 
+### 2. Install backend dependencies
 
+```bash
+cd backend
+npm install
+```
 
+### 3. Create backend environment variables
 
+Create a file:
 
+```text
+backend/.env
+```
 
+Add:
 
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+RESEND_API_KEY=your_resend_api_key
+```
+
+### 4. Start the backend
+
+```bash
+npm start
+```
+
+Backend:
+
+```text
+http://localhost:5000
+```
+
+### 5. Install frontend dependencies
+
+Open another terminal:
+
+```bash
+cd frontend
+npm install
+```
+
+### 6. Create frontend environment variables
+
+Create:
+
+```text
+frontend/.env
+```
+
+Add:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+### 7. Start the frontend
+
+```bash
+npm run dev
+```
+
+Frontend:
+
+```text
+http://localhost:5173
+```
 
 ## API Endpoints
 
 ### Authentication
 
-POST `/api/auth/register`
-
-POST `/api/auth/login`
-
-POST `/api/auth/forgot-password`
-
-POST `/api/auth/reset-password`
+```text
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/forgot-password
+POST /api/auth/reset-password
+```
 
 ### Job Applications
 
-GET `/api/applications`
-
-GET `/api/applications/stats`
-
-POST `/api/applications`
-
-PUT `/api/applications/:id`
-
-DELETE `/api/applications/:id`
+```text
+GET    /api/applications
+GET    /api/applications/stats
+POST   /api/applications
+PUT    /api/applications/:id
+DELETE /api/applications/:id
+```
 
 ### Resume
 
-GET `/api/resume`
-
-POST `/api/resume/upload`
-
-DELETE `/api/resume`
+```text
+GET    /api/resume
+POST   /api/resume/upload
+DELETE /api/resume
+```
 
 ### Job Matching
 
-POST `/api/matching/analyze`
+```text
+POST /api/matching/analyze
+```
 
 ### Health Check
 
-GET `/api/health`
-
+```text
+GET /api/health
+```
 
 ## Security
 
@@ -249,13 +307,6 @@ GET `/api/health`
 - Sensitive configuration is stored using environment variables
 - `.env` files are excluded from Git
 
-
-
-
-
-
-
-
 ## Future Improvements
 
 - Cloud storage for uploaded resumes
@@ -266,3 +317,9 @@ GET `/api/health`
 - AI-powered job recommendations
 - Application activity history
 - Job board integration
+
+## Author
+
+**K. Akash**
+
+GitHub: https://github.com/akashkonduru2-cell
