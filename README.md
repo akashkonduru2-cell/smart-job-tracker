@@ -88,6 +88,32 @@ The matcher provides:
 - Dashboard-based layout
 - Interactive charts
 
+## Screenshots
+
+### Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+### Applications
+
+![Applications](screenshots/applications.png)
+
+### Add Application
+
+![Add Application](screenshots/add-application.png)
+
+### Resume Manager
+
+![Resume Manager](screenshots/resume-manager.png)
+
+### Job Matching
+
+![Job Matching](screenshots/job-matching.png)
+
+### Login
+
+![Login](screenshots/login.png)
+
 ## Tech Stack
 
 ### Frontend
@@ -170,6 +196,14 @@ smart-job-tracker/
 │   │   └── main.jsx
 │   ├── package.json
 │   └── vercel.json
+│
+├── screenshots/
+│   ├── login.png
+│   ├── dashboard.png
+│   ├── resume-manager.png
+│   ├── job-matching.png
+│   ├── add-application.png
+│   └── applications.png
 │
 ├── .gitignore
 └── README.md
