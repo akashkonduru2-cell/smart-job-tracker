@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Auth from "./components/Auth";
+import ResetPassword from "./ResetPassword";
 import ApplicationForm from "./components/ApplicationForm";
 import ApplicationTable from "./components/ApplicationTable";
 import StatCard from "./components/StatCard";
@@ -166,6 +167,13 @@ function App() {
   const toggleDarkMode = () => {
     setDarkMode((current) => !current);
   };
+
+  const isResetPasswordPage =
+    window.location.pathname === "/reset-password";
+
+  if (isResetPasswordPage) {
+    return <ResetPassword />;
+  }
 
   if (!user) {
     return <Auth onLogin={handleLogin} />;

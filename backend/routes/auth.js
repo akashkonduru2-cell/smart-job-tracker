@@ -2,11 +2,14 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const { Resend } = require("resend");
 const User = require("../models/User");
 
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || "smart-job-tracker-secret";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 router.post("/register", async (req, res) => {
   try {
@@ -130,11 +133,13 @@ router.post("/forgot-password", async (req, res) => {
 
     if (!user) {
       return res.json({
-        message: "If an account exists with that email, a password reset link has been created."
+        message:
+          "If an account exists with that email, a password reset link has been created."
       });
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
+
     const hashedToken = crypto
       .createHash("sha256")
       .update(resetToken)
@@ -145,10 +150,38 @@ router.post("/forgot-password", async (req, res) => {
 
     await user.save();
 
-    console.log("Password reset token:", resetToken);
+    const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
+
+    const { error } = await resend.emails.send({
+      from: "Smart Job Tracker <onboarding@resend.dev>",
+      to: [user.email],
+      subject: "Reset your Smart Job Tracker password",
+      html: `
+        <div>
+          <h2>Reset your password</h2>
+          <p>You requested a password reset for your Smart Job Tracker account.</p>
+          <p>This link will expire in 15 minutes.</p>
+          <a href="${resetLink}">
+            Reset Password
+          </a>
+          <p>If you did not request this, you can ignore this email.</p>
+        </div>
+      `
+    });
+
+    if (error) {
+      user.resetPasswordToken = null;
+      user.resetPasswordExpires = null;
+      await user.save();
+
+      return res.status(500).json({
+        message: "Unable to send password reset email"
+      });
+    }
 
     res.json({
-      message: "If an account exists with that email, a password reset link has been created."
+      message:
+        "If an account exists with that email, a password reset link has been created."
     });
   } catch (error) {
     res.status(500).json({
