@@ -86,7 +86,10 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
 
     if (!passwordMatch) {
       return res.status(401).json({
@@ -150,7 +153,7 @@ router.post("/forgot-password", async (req, res) => {
 
     await user.save();
 
-    const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
+    const resetLink = `https://smart-job-tracker-steel.vercel.app/reset-password?token=${resetToken}`;
 
     const { error } = await resend.emails.send({
       from: "Smart Job Tracker <onboarding@resend.dev>",
@@ -159,12 +162,24 @@ router.post("/forgot-password", async (req, res) => {
       html: `
         <div>
           <h2>Reset your password</h2>
-          <p>You requested a password reset for your Smart Job Tracker account.</p>
-          <p>This link will expire in 15 minutes.</p>
-          <a href="${resetLink}">
-            Reset Password
-          </a>
-          <p>If you did not request this, you can ignore this email.</p>
+
+          <p>
+            You requested a password reset for your Smart Job Tracker account.
+          </p>
+
+          <p>
+            This link will expire in 15 minutes.
+          </p>
+
+          <p>
+            <a href="${resetLink}">
+              Reset Password
+            </a>
+          </p>
+
+          <p>
+            If you did not request this, you can ignore this email.
+          </p>
         </div>
       `
     });
@@ -172,6 +187,7 @@ router.post("/forgot-password", async (req, res) => {
     if (error) {
       user.resetPasswordToken = null;
       user.resetPasswordExpires = null;
+
       await user.save();
 
       return res.status(500).json({
@@ -213,7 +229,9 @@ router.post("/reset-password", async (req, res) => {
 
     const user = await User.findOne({
       resetPasswordToken: hashedToken,
-      resetPasswordExpires: { $gt: Date.now() }
+      resetPasswordExpires: {
+        $gt: Date.now()
+      }
     });
 
     if (!user) {
@@ -223,6 +241,7 @@ router.post("/reset-password", async (req, res) => {
     }
 
     user.password = await bcrypt.hash(password, 10);
+
     user.resetPasswordToken = null;
     user.resetPasswordExpires = null;
 
